@@ -2,15 +2,21 @@ from tkinter import *
 from tkinter import filedialog
 from pytube import YouTube 
 from tkinter import ttk
+from PIL import ImageTk, Image
+import requests
+import os
 
 imageName = 'thumbnail.jpg'
 root = Tk()
 root.title("YouTube Downloader")
-root.geometry("500x500")
+root.geometry("700x700")
 #window.columnconfigure(0, weight = 1)
 window0 = Frame(root)
 window1 = Frame(root)
 window2 = Frame(root)
+window3 = Frame(root)
+myTitleLabel = Label(window3)
+myImageLabel = Label(window3)
 
 def openLocate():
 	global path
@@ -24,6 +30,23 @@ def getURL():
 	URL = enterBox.get()
 	YT = YouTube(URL)
 	downloadLabel.config(text = "OK checked", fg = "green")
+
+
+	#display title and thumbnail
+	myTitleLabel.config(text = YT.title)
+	myTitleLabel.pack()
+
+	thumbnail_url = YT.thumbnail_url
+	r = requests.get(thumbnail_url)
+	with open("thumbnail.jpg", "wb") as f:
+		f.write(r.content)
+	myImage = ImageTk.PhotoImage(Image.open("thumbnail.jpg"))
+	myImageLabel.config(image = myImage)
+	myImageLabel.pack()
+	os.remove('thumbnail.jpg')
+	window3.pack()
+	root.mainloop()
+
 
 def download():
 	choice = ytdChoices.get()
